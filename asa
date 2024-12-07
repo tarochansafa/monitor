@@ -1,0 +1,56 @@
+import requests
+import hashlib
+from bs4 import BeautifulSoup
+import requests
+
+url = "https://ticket.e-daikoku.com/goods/list?sort=date+ASC&keyword=%E6%9D%B1%E4%BA%AC%E3%83%89%E3%83%BC%E3%83%A0"
+response = requests.get(url)
+response.raise_for_status()
+soup = BeautifulSoup(response.text, "html.parser")
+title = soup.title.text
+print("ページのタイトル:", title)
+import hashlib
+
+def fetch_page_content(url):
+    # 関数本体のためのインデントブロック
+    response = requests.get(url) #関数が意図したとおりに動作するようにこの行を追加しました
+    response.raise_for_status()  
+    return response.text
+
+def get_hash(content):
+    return hashlib.md5(content.encode('utf-8')).hexdigest()
+
+url = "https://ticket.e-daikoku.com/goods/list?sort=date+ASC&keyword=%E6%9D%B1%E4%BA%AC%E3%83%89%E3%83%BC%E3%83%A0"
+current_content = fetch_page_content(url)
+current_hash = get_hash(current_content)
+
+try:
+    with open("hash.txt", "r") as file:
+        previous_hash = file.read()
+except FileNotFoundError:
+    previous_hash = ""
+
+if current_hash != previous_hash:
+    print("ページが更新されました！")
+    with open("hash.txt", "w") as file:
+        file.write(current_hash)
+import requests
+
+# Slack WebhookのURL
+webhook_url = "https://discord.com/api/webhooks/1314789886888513658/3ukWPRI1HWsrauAs729DFr0zMale1qk7IdgT4zGEd6yiHlBHn5Xw_xJIeBHmwtWV9K4h"
+message = {"text": "Webサイトが更新されました！"}
+
+# リクエスト送信
+requests.post(webhook_url, json=message)
+import schedule
+import time
+
+def check_website():
+    # 監視ロジックを実行
+    print("サイトをチェック中...")
+
+schedule.every(10).minutes.do(check_website)
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
